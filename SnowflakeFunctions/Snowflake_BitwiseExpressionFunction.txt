@@ -1,0 +1,41 @@
+CREATE DATABASE SARDE;
+
+CREATE TABLE BIT_EXP_FUNCTION(bit_one integer, bit_two integer);
+
+INSERT INTO BIT_EXP_FUNCTION (bit_one, bit_two) VALUES
+    (null, null),
+    (2   ,  2),
+    (3   ,  6),
+    (6   ,  3);
+    
+SELECT * FROM BIT_EXP_FUNCTION;
+
+-- BITAND, BITOR, BITXOR
+-- SELECT CAST(3 AS BIT) & 
+SELECT bit_one, bit_two, BITAND(bit_one, bit_two), BITOR(bit_one, bit_two), BITXOR(bit_one, bit_two)
+FROM BIT_EXP_FUNCTION;
+
+-- BITNOT
+SELECT bit_one, BITNOT(bit_one) FROM BIT_EXP_FUNCTION;
+
+-- GETBIT, BITSHIFTLEFT, BITSHIFTRIGHT
+-- GETBIT(val, position)
+SELECT bit_one, NUM_TO_BIN(bit_one), GETBIT(bit_one, 1), BITSHIFTLEFT(bit_one, 2), BITSHIFTRIGHT(bit_one, 2)
+FROM BIT_EXP_FUNCTION;
+
+
+
+
+CREATE OR REPLACE FUNCTION NUM_TO_BIN(VAL String)
+RETURNS String
+LANGUAGE javascript
+AS $$
+    if (!VAL) {
+       return VAL
+    } else {
+    
+    var to_bin = (VAL >>> 0).toString(2);
+    return to_bin;
+    }
+$$;
+
