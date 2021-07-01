@@ -1,0 +1,97 @@
+/************************************
+    Conditional Expression Functions
+*************************************/
+
+-- ZEROIFNULL - Replace null with 0
+-- Returns 0 if its column value is null else returns default value.
+select column1, ZEROIFNULL(column1) from values (1), (null), (2);
+
+
+-- REGR_VALY - Returns NULL if the second argument is NULL else returns the first argument.
+-- REGR_VALX - Returns NULL if the first argument is NULL; otherwise, returns the second argument.
+-- NULL-preserving functions
+select REGR_VALY(null, 5), REGR_VALX(null, 5), REGR_VALY(1, null), REGR_VALX(1, null), 
+        REGR_VALY(1, 5), REGR_VALX(1, 5);
+
+
+-- Synatx : NVL( <arg1> , <arg2> ) 
+-- If expr1 is NULL, returns expr2, else returns expr1.
+select NVL('hello', 'world'), NVL(null, 100.0), NVL(null, null), NVL(20, null);
+
+
+-- Syantax : NVL2( <arg1> , <arg2> , <arg3> )
+-- If arg1 is NOT NULL, then returns arg2.
+-- If arg1 is NULL, then returns arg3.
+create database sarde;
+create table emp(id double, name string, age int);
+
+insert into emp (id, name, age) values (1.0, 'hello', 5);
+
+truncate emp;
+
+insert into emp (id, name, age) values
+    (NULL,111, 6),
+    (2.0, NULL, 7),
+    (3.0, 222, NULL);
+
+-- Should have same data type (Or Int and Double - String and Varchar - related data types are valid)
+-- if id is not null then return name else return age
+select id,name,age, NVL2(id,name,age) from emp;
+
+-- replace NULL with 0
+select id,name,age, NVL2(id, NVL(name, 0), age) from emp;
+
+
+-- NULLIF
+-- Returns NULL if arg1 matches with arg2, otherwise returns arg1.
+select id, age, NULLIF(id,age) from emp;
+
+
+-- LEAST
+-- Returns the min value from a list of arguments.
+select LEAST(10::STRING, 20::INT, 30::DECIMAL, 40::VARIANT);
+
+
+-- GREATEST
+-- Returns the max value from a list of arguments.
+select GREATEST(10::STRING, 20::INT, 30::DECIMAL, 40::VARIANT);
+
+
+-- IFF
+-- if-then-else and allows only single condition
+select IFF(10::int > 20, 'Greater', 'Smaller');
+
+select column1, IFF(column1::INT > 1, 'Greater', 'Smaller')
+    from ( select column1 from values(1), (2),(null));
+    
+
+-- EQUAL_NULL 
+-- Different than = operator because EQUAL_NULL treats NULL as known values.
+select column1, EQUAL_NULL(column1, NULL)
+    from ( select column1 from values(1), (2),(null));
+
+
+-- DECODE
+-- Compares column value with each search values. If search result match correspoding result is return
+select column1, decode(column1, 
+                       1, 'one', 
+                       2, 'two', 
+                       null, 'INVALID'
+                       ) as decode_result
+    from ( select column1 from values(1), (2),(null));
+
+
+-- COALESCE
+-- Returns NULL if all argument values are NULL else returns first NON-NULL
+
+select column1,column2,column3, COALESCE(column1, column2, column3)
+from (select column1,column2,column3 from values 
+      (null, null, null),
+      (1, null, null),
+      (null, 2, 3),
+      (null, null, 10)
+     );
+
+/************************************************************************************
+-- REF - https://docs.snowflake.com/en/sql-reference/expressions-conditional.html
+************************************************************************************/
