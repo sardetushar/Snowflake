@@ -1,0 +1,89 @@
+/************************************
+   Context Functions - General Context
+*************************************/
+
+/*
+1. CURRENT_CLIENT
+2. CURRENT_DATE
+3. CURRENT_IP_ADDRESS
+4. CURRENT_REGION
+5. CURRENT_TIME OR LOCALTIME
+6. CURRENT_TIMESTAMP OR LOCALTIMESTAMP
+7. CURRENT_VERSION
+8. SYSDATE
+*/
+
+SELECT CURRENT_CLIENT(), CURRENT_IP_ADDRESS(), CURRENT_REGION(), CURRENT_VERSION();
+
+SELECT  CURRENT_DATE(), CURRENT_TIME(), LOCALTIME(), CURRENT_TIMESTAMP() AS WEST_US_2_PDT, LOCALTIMESTAMP(), SYSDATE() AS UTC_DATE;
+
+
+
+
+/************************************
+   Context Functions - Session Context
+*************************************/
+
+/*
+1.	ALL_USER_NAMES
+2.	CURRENT_ACCOUNT
+3.	CURRENT_ROLE
+4.	CURRENT_AVAILABLE_ROLES
+5.	CURRENT_SESSION
+6.	CURRENT_STATEMENT
+7.	CURRENT_TRANSACTION
+8.	CURRENT_USER
+9.	LAST_QUERY_ID
+10.	LAST_TRANSACTION
+*/
+
+SELECT ALL_USER_NAMES(), CURRENT_ACCOUNT(), CURRENT_ROLE(), CURRENT_AVAILABLE_ROLES(), CURRENT_SESSION();
+
+SELECT CURRENT_STATEMENT(), CURRENT_TRANSACTION(), CURRENT_USER(), LAST_QUERY_ID(), LAST_TRANSACTION();
+
+// TEST CURRENT_TRANSACTION
+CREATE DATABASE SARDE;
+CREATE OR REPLACE TABLE EMP(ID INT, NAME STRING);
+BEGIN;
+INSERT INTO EMP (ID, NAME) VALUES (1,'HELLO');
+COMMIT;
+SELECT CURRENT_TRANSACTION(),  LAST_TRANSACTION();
+
+UPDATE EMP SET NAME = 'HELLO' WHERE ID = 1;
+
+SELECT CURRENT_TRANSACTION();
+
+
+/**********************************************
+   Context Functions - Session Object Context
+***********************************************/
+
+/*
+1.	CURRENT_DATABASE
+2.	CURRENT_SCHEMA
+3.	CURRENT_SCHEMAS
+4.	CURRENT_WAREHOUSE
+5.	INVOKER_ROLE
+6.	INVOKER_SHARE
+7.	IS_GRANTED_TO_INVOKER_ROLE
+8.	IS_ROLE_IN_SESSION
+*/
+
+
+SELECT CURRENT_DATABASE(), CURRENT_SCHEMA(), CURRENT_SCHEMAS(), CURRENT_WAREHOUSE();
+
+// INVOKER_SHARE() - Covered in Data sharing topic 
+// Prerequisite - Snowflake Data Share, Role hierarchy.
+
+// IS_GRANTED_TO_INVOKER_ROLE - I will cover in Role hierarchy topic.
+// TRUE - If INVOKER_ROLE inherits the custom role privileges OR 
+///role return by INVOKER_ROLE() function has higher previledge than custom role in a same role hierarchy.
+// else it returns FALSE
+SELECT INVOKER_SHARE(), IS_GRANTED_TO_INVOKER_ROLE('CUST_ROLE');
+
+
+SELECT INVOKER_ROLE(), IS_ROLE_IN_SESSION('SYSADMIN');
+
+/************************************************************************************
+-- REF - https://docs.snowflake.com/en/sql-reference/functions-context.html
+************************************************************************************/
