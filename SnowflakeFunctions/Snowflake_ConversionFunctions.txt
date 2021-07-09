@@ -1,0 +1,125 @@
+/************************************
+        Conversion Functions
+*************************************/
+
+/*
+CAST or ::               - Convert value of one data type to another data type
+TRY_CAST                - Returns null incase of conversion failure instead of query failed
+*/
+
+SELECT CAST('HELLO' AS INT), '2'::INT;
+
+SELECT TRY_CAST('hello' AS INT);
+
+
+/********** Text/Character/Binary Data Types ****************************/
+
+// TO_CHAR, TO_VARCHAR - Converts into formatted string 
+//TO_CHAR( <expr> [, 'FORMAT'])
+
+SELECT TO_CHAR('111.123'::DECIMAL, '$999.00'), TO_VARCHAR('111.123'::DECIMAL, '$999.00');
+
+SELECT TO_VARCHAR(SYSDATE(),'YYYY/MM/DD');
+
+SELECT TO_VARCHAR('2021-07-05 10:07:10'::TIMESTAMP, 'mm-dd-yyyy hh:mm:ss');
+
+// Convert input value to binary - HEX, BASE64 or UTF-8
+select TO_BINARY(HEX_ENCODE('HELLO'),'HEX');
+
+select HEX_DECODE_STRING(TO_VARCHAR(TO_BINARY(HEX_ENCODE('HELLO'),'HEX'),'HEX'));
+
+
+// https://docs.snowflake.com/en/sql-reference/sql-format-models.html#sql-format-models
+
+
+/********** Numeric Data Types ****************************/
+
+// TO_DECIMAL, TO_NUMBER, TO_NUMERIC, TO_DOUBLE
+// TO_NUMERIC - TO_NUMBER - TO_DECIMAL( <argument> [, '<format>' ] [, <precision> [, <scale> ] ] )
+// Support - TRY_TO_DECIMAL, TRY_TO_NUMBER, TRY_TO_NUMERIC, TRY_TO_DOUBLE - error handling - Returns NULL
+
+select column1,
+       TO_DECIMAL(column1, '99.99', 9, 7) as deci,
+       TO_NUMBER(column1, '99.999', 9, 7) as numb,
+       TO_NUMERIC(column1, '99.9999', 9, 7) as num
+     from values ('9.01'), ('3.2'), ('0'), ('  0.0'), ('  0.1');
+
+
+
+
+/********** Boolean Data Type ****************************/
+
+// TO_BOOLEAN , TRY_TO_BOOLEAN
+select column1, TO_BOOLEAN(column1) from values (1), (NULL); 
+
+select column1, TRY_TO_BOOLEAN(column1) from values ('hello'), ('0'), ('1'), (NULL); 
+
+
+
+
+/********** Date and Time Data Types ****************************/
+
+// DATE - TO_DATE( <argument> [, <format> ] )
+
+SELECT TO_DATE('07|05|2021', 'MM|DD|YYYY'), DATE('7/5/2021', 'MM/DD/YYYY');
+
+// Epoch
+SELECT TO_DATE('1625477308');
+
+SELECT TO_DATE('2021-07-05 10:20:30.000'), DATE('2021-07-05 10:20:30.000');
+
+// TO_TIME or TIME
+SELECT TO_TIME('10.49.10', 'HH24.MI.SS');
+
+SELECT TIME('13:49:10'), TIME('1625477308'), TIME('2021-07-05 10:20:30.000'::TIMESTAMP);
+
+
+// TO_TIMESTAMP_LTZ - Local timezone
+// TO_TIMESTAMP_NTZ - No timezone
+// TO_TIMESTAMP_TZ - with timezone
+// TRY_TO_TIMESTAMP_LTZ
+// TRY_TO_TIMESTAMP_NTZ
+// TRY_TO_TIMESTAMP_TZ
+
+SELECT TO_TIMESTAMP_LTZ('2013-04-05 01:02:03');
+
+alter session set timezone = 'America/New_York';
+
+SELECT '2021-07-05 10:10:13'::TIMESTAMP_NTZ, PARSE_JSON(1625477308::INT)::TIMESTAMP_LTZ, 
+1625477308::INT::TIMESTAMP_LTZ;
+
+alter session set timezone = 'Asia/Kolkata';
+
+
+
+/********** Semi-structured Data Types ****************************/
+
+// TO_ARRAY
+SELECT TO_ARRAY(26);
+SELECT TO_ARRAY(ARRAY_CONSTRUCT('HELLO', NULL, 'WORLD', 29::INT, 11.23::NUMBER(10,2)));
+
+// TO_OBJECT , TO_VARIANT
+SELECT TO_OBJECT(PARSE_JSON('{"ID":1, "NAME": "HELLO"}')), TO_VARIANT(PARSE_JSON('{"ID":1, "NAME": "HELLO"}'));
+
+
+
+
+/********** Geospatial Data Types ****************************/
+
+/*
+
+Geometric object format - WKT, WKB, EWKT, EWKB, GeoJSON
+
+TO_GEOGRAPHY
+TRY_TO_GEOGRAPHY - Error handling
+
+ST_GEOGFROMGEOHASH
+ST_GEOGPOINTFROMGEOHASH
+ST_GEOGRAPHYFROMWKB
+ST_GEOGRAPHYFROMWKT
+
+*/
+
+/************************************************************************************
+-- REF - https://docs.snowflake.com/en/sql-reference/functions-conversion.html
+************************************************************************************/
